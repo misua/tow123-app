@@ -1,0 +1,77 @@
+name: Deploy tow123-app to Amazon EKS
+
+# on:
+#   push:
+#     branches: ["main"]
+      
+#   pull_request:
+#     branches: ["main"]
+  
+
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  AWS_REGION: us-east-1
+  ECR_REGISTRY: public.ecr.aws/q3j7y8f9
+  ECR_REPOSITORY: ab_public
+  K8S_NAMESPACE: default
+  K8S_DEPLOYMENT_NAME: app-deployment
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    
+    - name: Set up Node.js
+      uses: actions/setup-node@v3 
+      with:
+        node-version: '16.x'
+    
+
+    - name: Configure AWS credentials
+      id: aws-credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{env.AWS_REGION}}
+
+    - name: Login to Amazon ECR
+      id: Login-ecr
+      run: |
+        aws ecr-public get-login-password --region ${{env.AWS_REGION}} | docker login --username AWS --password-stdin ${{env.ECR_REGISTRY}}
+   
+    - name: Build, tag, and push image to Amazon ECR
+      id: build-image
+      env:  
+        IMAGE_TAG: ${{ github.sha }}
+      run: |
+        docker build --no-cache -t ${{ env.ECR_REGISTRY }}/$ECR_REPOSITORY:$IMAGE_TAG .
+        docker push ${{ env.ECR_REGISTRY }}/$ECR_REPOSITORY:$IMAGE_TAG
+        echo "::set-output name=image::${{ steps.login-ecr.outputs.registry }}/$ECR_REPOSITORY:$IMAGE_TAG"
+    
+    - name: Update Kubeconfig
+      run: |
+        aws eks update-kubeconfig --region us-east-1 --name agencyboxcluster
+
+
+    - name: Deploy to Amazon EKS
+      env:
+        DIRECTORY: k8sManifests
+        YML_FILE: app.yml
+        IMAGE_TAG: ${{ github.sha }}
+      run: |
+        echo "${{ github.sha }}"
+        cd $DIRECTORY
+        export AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}
+        export AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        sed -i'' -e "s|imageTag|${{ env.ECR_REGISTRY }}/$ECR_REPOSITORY:$IMAGE_TAG|g" $YML_FILE
+        cat $YML_FILE
+        kubectl apply -f $YML_FILE

@@ -1,0 +1,4 @@
+.github/workflows/github-actions-ci.yml
+k8sManifests/app.yml
+k8sManifests/combined.yaml
+k8sManifests/multiaz.yaml

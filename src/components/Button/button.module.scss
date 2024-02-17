@@ -1,0 +1,94 @@
+@use '../../styles/colors.scss' as c;
+@use '../../styles/variables.scss' as v;
+
+.container {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: nowrap;
+  position: relative;
+  gap: v.$margin-1;
+  border-radius: v.$border-radius-2;
+  border: 0;
+  height: 50px;
+  padding: 0 v.$padding-5;
+  box-sizing: border-box;
+  transition: background-color v.$transition-speed-1;
+
+  &-enabled {
+    @extend .container;
+    transition: opacity 0.2s;
+    user-select: none;
+    cursor: pointer;
+
+    &:active {
+      opacity: 0.5;
+    }
+  }
+
+  &-disabled {
+    @extend .container;
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  &-full {
+    @extend .container;
+    width: 100%;
+  }
+
+  &-primary {
+    @extend .container;
+    background-color: c.$primary-darker;
+
+    &:hover {
+      background-color: c.$primary;
+    }
+
+    &-selected {
+      @extend .container;
+      background-color: c.$primary !important;
+    }
+  }
+
+  &-secondary {
+    @extend .container;
+    background-color: c.$primary-light;
+
+    &:hover {
+      background-color: c.$secondary;
+    }
+
+    &-selected {
+      @extend .container;
+      background-color: c.$secondary !important;
+    }
+  }
+
+  &-transparent {
+    @extend .container;
+    background-color: transparent;
+  }
+
+  .text {
+    margin: 0;
+    padding: 0;
+    font-size: v.$font-size-sm;
+    white-space: nowrap;
+
+    &-primary {
+      @extend .text;
+      color: c.$black !important;
+    }
+
+    &-secondary {
+      @extend .text;
+      color: c.$black;
+    }
+
+    &-transparent {
+      @extend .text;
+    }
+  }
+}

@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-deployment
+  labels:
+    app: tow123-app
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: tow123-app
+  template:
+    metadata:
+      labels:
+        app: tow123-app
+    spec:
+      containers:
+      - name: tow123-app
+        image: imageTag
+        ports:
+        - containerPort: 4000

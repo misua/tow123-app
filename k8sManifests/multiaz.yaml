@@ -1,0 +1,14 @@
+apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+
+metadata:
+  name: agencyboxcluster
+  region: us-east-1
+
+availabilityZones: ["us-east-1a", "us-east-1b", "us-east-1c"]
+
+nodeGroups:
+  - name: ng-1
+    instanceType: t2.micro
+    desiredCapacity: 3
+    volumeSize: 10

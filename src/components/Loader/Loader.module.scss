@@ -1,0 +1,59 @@
+@use '../../styles/colors.scss' as c;
+
+.loader {
+  border-style: solid;
+  border-radius: 50%;
+  display: inline-block;
+  box-sizing: border-box;
+  animation: rotation 1s linear infinite;
+
+  &-dark {
+    @extend .loader;
+    border-color: c.$white;
+    border-bottom-color: transparent;
+  }
+
+  &-light {
+    @extend .loader;
+    border-color: c.$primary;
+    border-bottom-color: transparent;
+  }
+
+  &-xs {
+    @extend .loader;
+    border-width: 3px;
+    width: 25px;
+    height: 25px;
+  }
+
+  &-sm {
+    @extend .loader;
+    border-width: 4px;
+    width: 36px;
+    height: 36px;
+  }
+
+  &-md {
+    @extend .loader;
+    border-width: 5px;
+    width: 40px;
+    height: 40px;
+  }
+
+  &-lg {
+    @extend .loader;
+    border-width: 6px;
+    width: 54px;
+    height: 54px;
+  }
+}
+
+@keyframes rotation {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
